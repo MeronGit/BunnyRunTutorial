@@ -23,4 +23,17 @@ public class JumpBunnyController : MonoBehaviour {
         //myAnimator.SetFloat("vVelocity", Mathf.Abs(myRigidBunny.velocity.y));
         myAnimator.SetFloat("vVelocity", myRigidBunny.velocity.y);
     }
+
+    void OnCollisionEnter2D(Collision2D collision) {
+
+        if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        {
+            //Load scene for the currently created scene
+            Application.LoadLevel(Application.loadedLevel);
+        }
+        
+        
+
+    }      //if layermask has enemy, load the scene from the start.
+  
 }
