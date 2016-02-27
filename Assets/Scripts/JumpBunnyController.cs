@@ -1,35 +1,72 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class JumpBunnyController : MonoBehaviour {
 
     private Rigidbody2D myRigidBunny;
     private Animator myAnimator;
     public float bunnyJumpForceShit = 500f;
+    private float bunnyHurtTime = -1;
+    private Collider2D myCollider;
+    public Text scoreText;
+    private float startTime;
 
 	// Use this for initialization
 	void Start () {
         myRigidBunny = GetComponent<Rigidbody2D>();
         myAnimator = GetComponent<Animator>();
+        myCollider = GetComponent<Collider2D>();
+        startTime = Time.time;
 	}
-	
-	// Update is called once per frame
-	void Update () {
-        //Jump with spacebar, unity keybindings
-        if (Input.GetButtonUp("Jump"))
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        if (bunnyHurtTime == -1)
+        {
+            //Jump with spacebar, unity keybindings
+            if (Input.GetButtonUp("Jump"))
             {
-            myRigidBunny.AddForce(transform.up * bunnyJumpForceShit);
+                myRigidBunny.AddForce(transform.up * bunnyJumpForceShit);
             }
-        //myAnimator.SetFloat("vVelocity", Mathf.Abs(myRigidBunny.velocity.y));
-        myAnimator.SetFloat("vVelocity", myRigidBunny.velocity.y);
+            //myAnimator.SetFloat("vVelocity", Mathf.Abs(myRigidBunny.velocity.y));
+            myAnimator.SetFloat("vVelocity", myRigidBunny.velocity.y);
+            scoreText.text = (Time.time - startTime).ToString("0.0");
+        }
+        else {
+            //two seconds after we collided  +2
+            if (Time.time > bunnyHurtTime + 2)
+            {
+            //Load scene for the currently created scene / 8:39
+                Application.LoadLevel(Application.loadedLevel);
+            }
+        }
     }
 
     void OnCollisionEnter2D(Collision2D collision) {
 
         if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
-            //Load scene for the currently created scene
-            Application.LoadLevel(Application.loadedLevel);
+            foreach (PrefabsSpawner spawner in FindObjectsOfType<PrefabsSpawner>())
+            {
+                spawner.enabled = false;
+            }
+            foreach (MoveLeft moveLefter in FindObjectsOfType<MoveLeft>())
+            {
+                //disable script in the list
+                moveLefter.enabled = false;
+            }
+
+            bunnyHurtTime = Time.time;
+            myAnimator.SetBool("bunnyHurt", true);
+            //cancel out any motion of movement bunnny has
+            myRigidBunny.velocity = Vector2.zero;
+            myRigidBunny.AddForce(transform.up * bunnyJumpForceShit);
+            myCollider.enabled = false;
+            //18:53
+
         }
         
         
