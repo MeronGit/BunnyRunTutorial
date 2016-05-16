@@ -11,6 +11,7 @@ public class JumpBunnyController : MonoBehaviour {
     private Collider2D myCollider;
     public Text scoreText;
     private float startTime;
+    private int jumpsLeft = 2;
 
 	// Use this for initialization
 	void Start () {
@@ -23,13 +24,25 @@ public class JumpBunnyController : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-
+        //Let bunny jump only twice!
         if (bunnyHurtTime == -1)
         {
             //Jump with spacebar, unity keybindings
-            if (Input.GetButtonUp("Jump"))
+            if (Input.GetButtonUp("Jump") && jumpsLeft > 0)
             {
-                myRigidBunny.AddForce(transform.up * bunnyJumpForceShit);
+                if (myRigidBunny.velocity.y < 0)
+                {
+                    myRigidBunny.velocity = Vector2.zero;
+                }
+                if (jumpsLeft == 1)
+                {
+                    myRigidBunny.AddForce(transform.up * bunnyJumpForceShit * 0.75f);
+                }
+                else
+                {
+                    myRigidBunny.AddForce(transform.up * bunnyJumpForceShit);
+                }
+                jumpsLeft--;
             }
             //myAnimator.SetFloat("vVelocity", Mathf.Abs(myRigidBunny.velocity.y));
             myAnimator.SetFloat("vVelocity", myRigidBunny.velocity.y);
@@ -68,8 +81,13 @@ public class JumpBunnyController : MonoBehaviour {
             //18:53
 
         }
-        
-        
+        else if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            jumpsLeft = 2;
+        }
+
+
+
 
     }      //if layermask has enemy, load the scene from the start.
   
