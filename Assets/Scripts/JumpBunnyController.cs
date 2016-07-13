@@ -12,6 +12,8 @@ public class JumpBunnyController : MonoBehaviour {
     public Text scoreText;
     private float startTime;
     private int jumpsLeft = 2;
+    public AudioSource jumpSfx;
+    public AudioSource deathSfx;
 
 	// Use this for initialization
 	void Start () {
@@ -43,6 +45,8 @@ public class JumpBunnyController : MonoBehaviour {
                     myRigidBunny.AddForce(transform.up * bunnyJumpForceShit);
                 }
                 jumpsLeft--;
+
+                jumpSfx.Play();
             }
             //myAnimator.SetFloat("vVelocity", Mathf.Abs(myRigidBunny.velocity.y));
             myAnimator.SetFloat("vVelocity", myRigidBunny.velocity.y);
@@ -78,7 +82,8 @@ public class JumpBunnyController : MonoBehaviour {
             myRigidBunny.velocity = Vector2.zero;
             myRigidBunny.AddForce(transform.up * bunnyJumpForceShit);
             myCollider.enabled = false;
-            //18:53
+            deathSfx.Play();
+
 
         }
         else if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
